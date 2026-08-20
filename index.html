@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HDRP Drug Tab</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Space Grotesk', sans-serif; background-color: #02040a; background-image: radial-gradient(circle at 15% 50%, rgba(254, 255, 127, 0.08), transparent 25%), radial-gradient(circle at 85% 30%, rgba(127, 255, 212, 0.08), transparent 25%); color: #e2e8f0; min-height: 100vh; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 16px; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .glass-panel { background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2); }
+        .glass-input { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); color: white; transition: all 0.2s; }
+        .glass-input:focus { background: rgba(0, 0, 0, 0.8); border-color: rgba(127, 255, 212, 0.5); outline: none; }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+        input[type="datetime-local"] { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.1); color: white; transition: all 0.2s; }
+        input[type="datetime-local"]:focus { background: rgba(0, 0, 0, 0.8); border-color: rgba(127, 255, 212, 0.5); outline: none; }
+        input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+        select option { background-color: #02040a; color: white; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 3px; }
+        .nav-tab { padding: 10px 24px; border-radius: 10px; font-weight: 600; font-size: 0.9em; cursor: pointer; transition: all 0.2s; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); color: #94a3b8; }
+        .nav-tab:hover { background: rgba(255, 255, 255, 0.1); color: #e2e8f0; }
+        .nav-tab.active { background: linear-gradient(135deg, rgba(74, 222, 128, 0.2), rgba(34, 197, 94, 0.2)); border-color: rgba(74, 222, 128, 0.4); color: #4ade80; box-shadow: 0 0 15px rgba(74, 222, 128, 0.15); }
+        .section { display: none; }
+        .section.active { display: block; }
+        .timer-step { background: rgba(0, 0, 0, 0.3); border-radius: 12px; padding: 20px; margin-bottom: 15px; border-left: 4px solid #4ade80; }
+        .timer-step-title { color: #4ade80; font-weight: bold; margin-bottom: 8px; }
+        .timer-step-time { color: #fbbf24; font-size: 1.1em; }
+        .timer-arrow { text-align: center; color: #4ade80; font-size: 1.5em; margin: 10px 0; }
+        .timer-input-section { margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+        .timer-label { color: #e2e8f0; display: block; margin-bottom: 8px; }
+        .timer-results { margin-top: 25px; padding: 20px; background: rgba(0, 0, 0, 0.4); border-radius: 12px; display: none; }
+        .timer-results.show { display: block; }
+        .timer-result-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .timer-result-item:last-child { border-bottom: none; }
+        .timer-result-label { color: #94a3b8; }
+        .timer-result-value { color: #fbbf24; font-weight: bold; }
+        .timer-harvest-time { color: #4ade80; font-size: 1.3em; text-align: center; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(74, 222, 128, 0.3); }
+        .timer-total-time { text-align: center; color: #60a5fa; margin-top: 15px; font-size: 0.9em; }
+        .profit-filter { padding: 6px 14px; border-radius: 8px; font-weight: 600; font-size: 0.8em; cursor: pointer; transition: all 0.2s; background: rgba(100, 116, 139, 0.2); border: 1px solid rgba(100, 116, 139, 0.3); color: #94a3b8; }
+        .profit-filter:hover { color: white; }
+        .profit-filter.active { background: rgba(74, 222, 128, 0.2); border: 1px solid rgba(74, 222, 128, 0.3); color: #4ade80; }
+        .fade-in { animation: fadeIn 0.3s ease forwards; opacity: 0; }
+        @keyframes fadeIn { to { opacity: 1; } }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="glass-panel rounded-2xl p-4 mb-4" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+        <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#10b981,#0d9488);display:flex;align-items:center;justify-content:center;font-size:20px;">&#127807;</div>
+            <div>
+                <div style="font-weight:700;font-size:1.1em;color:white;">HDRP Drug Directory</div>
+                <div style="font-size:9px;color:#64748b;text-transform:uppercase;letter-spacing:1px;">Calculator Suite</div>
+            </div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="nav-tab active" onclick="switchTab('home')" id="tab-home">&#127968; Home</button>
+            <button class="nav-tab" onclick="switchTab('timer')" id="tab-timer">&#9201; Planting Timer</button>
+            <button class="nav-tab" onclick="switchTab('breeding')" id="tab-breeding">&#129514; Seed Breeding</button>
+            <button class="nav-tab" onclick="switchTab('profit')" id="tab-profit">&#128200; Profitability</button>
+            <button class="nav-tab" onclick="switchTab('drugs')" id="tab-drugs">&#128138; Other Drugs</button>
+        </div>
+    </div>
+
+    <div id="section-home" class="section active">
+        <div class="glass-panel rounded-2xl p-6" style="max-width:700px;margin:0 auto;">
+            <div style="text-align:center;margin-bottom:24px;">
+                <div style="width:60px;height:60px;border-radius:16px;background:linear-gradient(135deg,#10b981,#0d9488);display:flex;align-items:center;justify-content:center;font-size:30px;margin:0 auto 12px;">&#127807;</div>
+                <h1 style="font-size:1.8em;font-weight:700;color:white;margin-bottom:4px;">FiveM Weed Tools</h1>
+                <p style="color:#64748b;font-size:0.9em;">GTA V Calculator Suite</p>
+            </div>
+
+            <div style="display:grid;gap:16px;">
+                <div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.05);">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                        <span style="font-size:1.2em;">&#9201;</span>
+                        <div style="font-weight:700;color:white;">Planting Timer</div>
+                    </div>
+                    <p style="color:#94a3b8;font-size:0.85em;line-height:1.5;">Set your plant time and get live countdowns for Water &amp; Fertilize (1hr 20min) and Harvest (2hr 40min total).</p>
+                </div>
+
+                <div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.05);">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                        <span style="font-size:1.2em;">&#129514;</span>
+                        <div style="font-weight:700;color:white;">Seed Breeding</div>
+                    </div>
+                    <p style="color:#94a3b8;font-size:0.85em;line-height:1.5;">Select a target strain and batch size to see the full breeding tree, DNA sequences, parent strains, and base seed costs ($1,000 per base seed + $500 lab fee).</p>
+                </div>
+
+                <div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.05);">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                        <span style="font-size:1.2em;">&#128200;</span>
+                        <div style="font-weight:700;color:white;">Profitability</div>
+                    </div>
+                    <p style="color:#94a3b8;font-size:0.85em;line-height:1.5;">Compare all 13 weed strains by profit, ROI, and cost. Filter by tier, sort by different metrics, and adjust seeds planted and weed per grow to see real-time calculations.</p>
+                </div>
+
+                <div style="background:rgba(0,0,0,0.3);border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.05);">
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+                        <span style="font-size:1.2em;">&#128138;</span>
+                        <div style="font-weight:700;color:white;">Other Drugs</div>
+                    </div>
+                    <p style="color:#94a3b8;font-size:0.85em;line-height:1.5;">All non-weed drugs with no production cost - pure profit. Includes Shrooms, Pills (White &amp; Orange variants), Oxy, and Cocaine Baggy.</p>
+                </div>
+            </div>
+
+            <div style="margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);text-align:center;">
+                <p style="color:#64748b;font-size:0.75em;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Created by</p>
+                <p style="color:white;font-weight:700;font-size:1em;">Owen Octavia + lnaq (Github)</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="section-timer" class="section">
+        <div style="max-width:500px;margin:0 auto;">
+            <div class="glass-panel rounded-2xl p-6">
+                <h2 style="text-align:center;font-size:1.5em;font-weight:700;color:#4ade80;margin-bottom:4px;">Weed Calculator</h2>
+                <p style="text-align:center;color:#94a3b8;margin-bottom:24px;font-size:0.9em;">Weed Timer</p>
+                <div class="timer-step"><div class="timer-step-title">Step 1: Plant</div><div class="timer-step-time">Duration: 1 hour 20 minutes</div></div>
+                <div class="timer-arrow">&darr;</div>
+                <div class="timer-step"><div class="timer-step-title">Step 2: Water &amp; Fertilize</div><div class="timer-step-time">Duration: 1 hour 20 minutes</div></div>
+                <div class="timer-arrow">&darr;</div>
+                <div class="timer-step"><div class="timer-step-title">Step 3: Harvest</div><div class="timer-step-time">Total: 2 hours 40 minutes</div></div>
+                <div class="timer-input-section">
+                    <label class="timer-label" for="plantTime">When did you plant?</label>
+                    <input type="datetime-local" id="plantTime" class="glass-input" style="width:100%;padding:12px;border-radius:8px;margin-bottom:16px;">
+                    <button onclick="calculateHarvest()" style="width:100%;padding:12px;border-radius:8px;border:none;background:linear-gradient(135deg,#10b981,#0d9488);color:#02040a;font-weight:700;font-size:1em;cursor:pointer;">Calculate Harvest Time</button>
+                    <div class="timer-results" id="timerResults">
+                        <div class="timer-result-item"><span class="timer-result-label">Planting Started:</span><span class="timer-result-value" id="plantTimeDisplay">-</span></div>
+                        <div class="timer-result-item"><span class="timer-result-label">Water &amp; Fertilize:</span><span class="timer-result-value" id="waterTimeDisplay">-</span></div>
+                        <div class="timer-result-item"><span class="timer-result-label">Harvest Ready:</span><span class="timer-result-value" id="harvestTimeDisplay">-</span></div>
+                        <div class="timer-harvest-time" id="countdown">Ready to harvest!</div>
+                        <div class="timer-total-time">Total time: 2 hours 40 minutes (160 minutes)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="section-breeding" class="section">
+        <div class="glass-panel rounded-2xl p-4 mb-3" style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;">
+            <div style="flex:1;min-width:200px;">
+                <label style="display:block;font-size:10px;text-transform:uppercase;font-weight:700;color:#94a3b8;letter-spacing:1px;margin-bottom:6px;">Target Strain</label>
+                <select id="targetSeed" class="glass-input" style="width:100%;padding:10px 16px;border-radius:12px;cursor:pointer;" onchange="calculateBreeding()">
+                    <option value="" disabled selected>Select a strain...</option>
+                </select>
+            </div>
+            <div style="width:120px;">
+                <label style="display:block;font-size:10px;text-transform:uppercase;font-weight:700;color:#94a3b8;letter-spacing:1px;margin-bottom:6px;">Batch Size</label>
+                <input type="number" id="batchSize" value="1" min="1" class="glass-input font-mono" style="width:100%;padding:10px;border-radius:12px;text-align:center;">
+            </div>
+            <button onclick="calculateBreeding()" style="padding:10px 32px;border-radius:12px;border:none;background:linear-gradient(135deg,#059669,#0d9488);color:white;font-weight:700;cursor:pointer;">Calculate</button>
+        </div>
+
+        <div class="glass-panel rounded-xl p-3 mb-4" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
+            <span style="font-size:10px;text-transform:uppercase;font-weight:700;color:#94a3b8;letter-spacing:1px;">Inventory:</span>
+            <div style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.3);padding:6px 12px;border-radius:8px;border:1px solid rgba(100,116,139,0.3);"><span style="font-size:10px;color:#93c5fd;font-weight:700;">Lemon Haze</span><input type="number" id="inv-Lemon Haze" class="font-mono" style="width:48px;background:transparent;color:white;text-align:center;border:none;border-bottom:1px solid #475569;" placeholder="0" min="0"></div>
+            <div style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.3);padding:6px 12px;border-radius:8px;border:1px solid rgba(100,116,139,0.3);"><span style="font-size:10px;color:#93c5fd;font-weight:700;">N. Lights</span><input type="number" id="inv-Northern Lights" class="font-mono" style="width:48px;background:transparent;color:white;text-align:center;border:none;border-bottom:1px solid #475569;" placeholder="0" min="0"></div>
+            <div style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.3);padding:6px 12px;border-radius:8px;border:1px solid rgba(100,116,139,0.3);"><span style="font-size:10px;color:#93c5fd;font-weight:700;">Blue Dream</span><input type="number" id="inv-Blue Dream" class="font-mono" style="width:48px;background:transparent;color:white;text-align:center;border:none;border-bottom:1px solid #475569;" placeholder="0" min="0"></div>
+        </div>
+
+        <div id="breedingResults" style="display:none;">
+            <div class="glass-panel rounded-xl p-3 mb-3" style="display:flex;align-items:center;gap:16px;overflow-x:auto;">
+                <div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;white-space:nowrap;">&#128722; Base Seeds:</div>
+                <div id="baseIngredientsList" style="display:flex;gap:8px;overflow-x:auto;"></div>
+            </div>
+            <div id="breedingSteps" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;"></div>
+        </div>
+    </div>
+
+    <div id="section-profit" class="section">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:16px;">
+            <div class="glass-panel rounded-xl p-4">
+                <div style="font-size:9px;color:#64748b;text-transform:uppercase;font-weight:700;letter-spacing:1px;">Best Profit</div>
+                <div id="summaryBestProfit" style="color:#facc15;font-weight:700;font-size:1.2em;font-family:'JetBrains Mono',monospace;margin-top:4px;"></div>
+                <div id="summaryBestProfitVal" style="color:#4ade80;font-family:'JetBrains Mono',monospace;font-size:0.9em;"></div>
+            </div>
+            <div class="glass-panel rounded-xl p-4">
+                <div style="font-size:9px;color:#64748b;text-transform:uppercase;font-weight:700;letter-spacing:1px;">Best ROI</div>
+                <div id="summaryBestROI" style="color:#4ade80;font-weight:700;font-size:1.2em;font-family:'JetBrains Mono',monospace;margin-top:4px;"></div>
+                <div id="summaryBestROIVal" style="color:#4ade80;font-family:'JetBrains Mono',monospace;font-size:0.9em;"></div>
+            </div>
+            <div class="glass-panel rounded-xl p-4">
+                <div style="font-size:9px;color:#64748b;text-transform:uppercase;font-weight:700;letter-spacing:1px;">Avoid</div>
+                <div id="summaryWorst" style="color:#f87171;font-weight:700;font-size:1.2em;font-family:'JetBrains Mono',monospace;margin-top:4px;"></div>
+                <div id="summaryWorstVal" style="color:#f87171;font-family:'JetBrains Mono',monospace;font-size:0.9em;"></div>
+            </div>
+        </div>
+
+        <div class="glass-panel rounded-xl p-3 mb-4" style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+            <span style="font-size:10px;text-transform:uppercase;font-weight:700;color:#94a3b8;letter-spacing:1px;">Filter:</span>
+            <button onclick="filterProfit('all')" class="profit-filter active" data-filter="all">All</button>
+            <button onclick="filterProfit(1)" class="profit-filter" data-filter="1">Tier 1</button>
+            <button onclick="filterProfit(2)" class="profit-filter" data-filter="2">Tier 2</button>
+            <button onclick="filterProfit(3)" class="profit-filter" data-filter="3">Tier 3</button>
+            <button onclick="filterProfit(4)" class="profit-filter" data-filter="4">Tier 4</button>
+            <button onclick="filterProfit(5)" class="profit-filter" data-filter="5">Tier 5</button>
+            <div style="margin-left:auto;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <label style="font-size:10px;text-transform:uppercase;font-weight:700;color:#94a3b8;letter-spacing:1px;">Seeds:</label>
+                    <input type="number" id="profitGlobalSeeds" value="1" min="1" class="glass-input font-mono" style="width:60px;padding:6px 8px;border-radius:8px;text-align:center;font-size:0.8em;" oninput="renderProfitCards()">
+                </div>
+                <div style="display:flex;align-items:center;gap:6px;">
+                    <label style="font-size:10px;text-transform:uppercase;font-weight:700;color:#94a3b8;letter-spacing:1px;">Sort:</label>
+                    <select id="profitSort" onchange="renderProfitCards()" class="glass-input" style="padding:6px 12px;border-radius:8px;cursor:pointer;font-size:0.8em;">
+                        <option value="profit-desc">Profit: High to Low</option>
+                        <option value="profit-asc">Profit: Low to High</option>
+                        <option value="roi-desc">ROI: High to Low</option>
+                        <option value="cost-asc">Cost: Low to High</option>
+                        <option value="tier-asc">Tier: Low to High</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="profitGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;"></div>
+    </div>
+
+    <div id="section-drugs" class="section">
+        <div class="glass-panel rounded-2xl p-4 mb-4">
+            <div style="display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;">
+                <div style="width:120px;">
+                    <label style="display:block;font-size:10px;text-transform:uppercase;font-weight:700;color:#94a3b8;letter-spacing:1px;margin-bottom:6px;">Quantity</label>
+                    <input type="number" id="drugQty" value="1" min="1" class="glass-input font-mono" style="width:100%;padding:10px;border-radius:12px;text-align:center;" oninput="renderDrugCards()">
+                </div>
+            </div>
+        </div>
+        <div id="drugGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px;"></div>
+    </div>
+
+<script>
+
+function switchTab(tab) {
+    var sections = document.querySelectorAll('.section');
+    for (var i = 0; i < sections.length; i++) sections[i].classList.remove('active');
+    var tabs = document.querySelectorAll('.nav-tab');
+    for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
+    document.getElementById('section-' + tab).classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+    if (tab === 'profit') renderProfitCards();
+    if (tab === 'drugs') renderDrugCards();
+}
+
+function calculateHarvest() {
+    var v = document.getElementById('plantTime').value;
+    if (!v) { alert('Please select when you planted!'); return; }
+    var p = new Date(v);
+    var w = new Date(p.getTime() + 80 * 60000);
+    var h = new Date(p.getTime() + 160 * 60000);
+    document.getElementById('plantTimeDisplay').textContent = fmtTime(p);
+    document.getElementById('waterTimeDisplay').textContent = fmtTime(w);
+    document.getElementById('harvestTimeDisplay').textContent = fmtTime(h);
+    document.getElementById('timerResults').classList.add('show');
+    doCountdown(h);
+    if (window._cd) clearInterval(window._cd);
+    window._cd = setInterval(function() { doCountdown(h); }, 1000);
+}
+function doCountdown(t) {
+    var d = t - new Date();
+    if (d <= 0) { document.getElementById('countdown').innerHTML = '<span style="color:#4ade80">Ready to Harvest!</span>'; return; }
+    document.getElementById('countdown').textContent = 'Time remaining: ' + Math.floor(d/3600000) + 'h ' + Math.floor((d%3600000)/60000) + 'm ' + Math.floor((d%60000)/1000) + 's';
+}
+function fmtTime(d) { return d.toLocaleString('en-US', {month:'short',day:'numeric',hour:'2-digit',minute:'2-digit',hour12:true}); }
+document.getElementById('plantTime').value = new Date().toISOString().slice(0, 16);
+
+var baseStrains = ["Lemon Haze", "Northern Lights", "Blue Dream"];
+var BASE_SEED_COST = 1000, LAB_FEE = 500;
+
+var database = {
+    "Grape Ape": { tier:2, p1:"Lemon Haze", p2:"Northern Lights", dna:["C3","D1","B2","A4"] },
+    "Green Crack": { tier:2, p1:"Northern Lights", p2:"Northern Lights", dna:["B2","A3","C1","D4"] },
+    "Purple Kush": { tier:2, p1:"Blue Dream", p2:"Lemon Haze", dna:["D1","C2","A4","B3"] },
+    "Blueberry Kush": { tier:2, p1:"Northern Lights", p2:"Blue Dream", dna:["A1","B4","D2","C3"] },
+    "Pineapple Express": { tier:3, p1:"Blueberry Kush", p2:"Purple Kush", dna:["D4","B3","A1","C2"] },
+    "Ocean Grow OG": { tier:3, p1:"Purple Kush", p2:"Grape Ape", dna:["B4","D2","C1","A3"] },
+    "Strawberry Cough": { tier:3, p1:"Green Crack", p2:"Blueberry Kush", dna:["A2","C4","B1","D3"] },
+    "Pink Kush": { tier:4, p1:"Strawberry Cough", p2:"Pineapple Express", dna:["C2","A4","D1","B3"] },
+    "Cherry Pie": { tier:4, p1:"Pineapple Express", p2:"Ocean Grow OG", dna:["A3","B1","D4","C2"] },
+    "Cherry Snowman": { tier:5, p1:"Pink Kush", p2:"Cherry Pie", dna:["D3","C1","A2","B4"] }
+};
+
+var tierColors2 = {
+    2: { color:'#feff7f', cls:'border-color:rgba(254,255,127,0.3);' },
+    3: { color:'#7fffd4', cls:'border-color:rgba(127,255,212,0.3);' },
+    4: { color:'#ffbf7f', cls:'border-color:rgba(255,191,127,0.3);' },
+    5: { color:'#ff80bf', cls:'border-color:rgba(255,128,191,0.3);' }
+};
+
+var sel = document.getElementById('targetSeed');
+Object.keys(database).sort(function(a,b){return database[a].tier-database[b].tier;}).forEach(function(s){
+    var o = document.createElement('option');
+    o.value = s;
+    o.textContent = 'Tier ' + database[s].tier + ' - ' + s;
+    sel.appendChild(o);
+});
+
+document.getElementById('batchSize').addEventListener('input', calculateBreeding);
+document.getElementById('inv-Lemon Haze').addEventListener('input', calculateBreeding);
+document.getElementById('inv-Northern Lights').addEventListener('input', calculateBreeding);
+document.getElementById('inv-Blue Dream').addEventListener('input', calculateBreeding);
+
+function calculateBreeding() {
+    var target = document.getElementById('targetSeed').value;
+    var amount = parseInt(document.getElementById('batchSize').value) || 1;
+    var inv = {
+        "Lemon Haze": parseInt(document.getElementById('inv-Lemon Haze').value) || 0,
+        "Northern Lights": parseInt(document.getElementById('inv-Northern Lights').value) || 0,
+        "Blue Dream": parseInt(document.getElementById('inv-Blue Dream').value) || 0
+    };
+    if (!target) return;
+    var baseTotals = {}, steps = [];
+    function resolve(name, qty) {
+        if (baseStrains.indexOf(name) !== -1) { baseTotals[name] = (baseTotals[name]||0)+qty; return; }
+        var r = database[name]; if (!r) return;
+        steps.push({ name:name, qty:qty, tier:r.tier, p1:r.p1, p2:r.p2, dna:r.dna });
+        resolve(r.p1, qty); resolve(r.p2, qty);
+    }
+    resolve(target, amount);
+    steps.sort(function(a,b){return (a.tier-b.tier)||a.name.localeCompare(b.name);});
+
+    document.getElementById('breedingResults').style.display = 'block';
+    var baseEl = document.getElementById('baseIngredientsList');
+    var stepsEl = document.getElementById('breedingSteps');
+    baseEl.innerHTML = ''; stepsEl.innerHTML = '';
+    var net = 0;
+
+    Object.keys(baseTotals).forEach(function(n){
+        var c = baseTotals[n], o = inv[n]||0, need = Math.max(0, c-o);
+        net += need;
+        var d = document.createElement('div');
+        d.style.cssText = 'display:flex;align-items:center;gap:8px;background:rgba(100,116,139,0.15);padding:6px 12px;border-radius:8px;border:1px solid rgba(100,116,139,0.2);white-space:nowrap;';
+        d.innerHTML = '<span style="color:#cbd5e1;font-weight:500;font-size:12px;">'+n+'</span><span style="color:#93c5fd;font-weight:700;background:rgba(59,130,246,0.2);padding:2px 8px;border-radius:4px;font-size:10px;font-family:monospace;">'+need+'</span>';
+        baseEl.appendChild(d);
+    });
+
+    var fmt = new Intl.NumberFormat('en-US',{style:'currency',currency:'USD',maximumFractionDigits:0});
+    steps.forEach(function(step, i){
+        var tc = tierColors2[step.tier] || {color:'#cbd5e1',cls:'border-color:rgba(148,163,184,0.3);'};
+        var dna = step.dna.map(function(seq,j){
+            var dc = ['#f472b6','#a78bfa','#22d3ee','#34d399'][j];
+            return '<div style="text-align:center;"><div style="font-size:8px;color:#64748b;margin-bottom:2px;">SEQ '+(j+1)+'</div><div style="background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.05);border-radius:4px;padding:4px 0;font-size:10px;font-weight:700;font-family:monospace;color:'+dc+';">'+seq+'</div></div>';
+        }).join('');
+        var card = document.createElement('div');
+        card.className = 'fade-in glass-panel';
+        card.style.cssText = 'padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);'+tc.cls+'background:rgba(15,23,42,0.6);animation-delay:'+(i*0.05)+'s;';
+        card.innerHTML = '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;"><div style="display:flex;align-items:center;gap:10px;"><div style="background:rgba(0,0,0,0.4);color:white;font-family:monospace;font-weight:700;font-size:12px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;border:1px solid rgba(255,255,255,0.1);">'+step.qty+'</div><div><div style="font-size:9px;color:#64748b;font-weight:700;text-transform:uppercase;">STEP '+( i+1)+'</div><div style="font-weight:700;font-size:14px;color:'+tc.color+';">'+step.name+'</div></div></div><span style="color:'+tc.color+';background:'+tc.color+'10;border:1px solid '+tc.color+'30;font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 8px;border-radius:99px;">Tier '+step.tier+'</span></div><div style="display:flex;justify-content:center;gap:8px;font-size:10px;color:#94a3b8;background:rgba(0,0,0,0.2);padding:6px 8px;border-radius:8px;border:1px solid rgba(255,255,255,0.05);margin-bottom:8px;"><span style="color:#93c5fd;font-weight:700;">'+step.p1+'</span><span>+</span><span style="color:#93c5fd;font-weight:700;">'+step.p2+'</span></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">'+dna+'</div>';
+        stepsEl.appendChild(card);
+    });
+}
+
+var BAGS_PER_SEED = 110;
+
+var profitData = [
+    { name:"Lemon Haze", tier:1, cost:10000, pricePerBag:355, weedPerGrow:180 },
+    { name:"Northern Lights", tier:1, cost:10000, pricePerBag:336, weedPerGrow:180 },
+    { name:"Blue Dream", tier:1, cost:10000, pricePerBag:355, weedPerGrow:180 },
+    { name:"Grape Ape", tier:2, cost:25000, pricePerBag:502, weedPerGrow:180 },
+    { name:"Green Crack", tier:2, cost:25000, pricePerBag:430, weedPerGrow:180 },
+    { name:"Purple Kush", tier:2, cost:25000, pricePerBag:480, weedPerGrow:180 },
+    { name:"Blueberry Kush", tier:2, cost:25000, pricePerBag:455, weedPerGrow:180 },
+    { name:"Pineapple Express", tier:3, cost:45000, pricePerBag:612, weedPerGrow:220 },
+    { name:"Ocean Grow OG", tier:3, cost:45000, pricePerBag:670, weedPerGrow:220 },
+    { name:"Strawberry Cough", tier:3, cost:45000, pricePerBag:587, weedPerGrow:220 },
+    { name:"Pink Kush", tier:4, cost:85000, pricePerBag:805, weedPerGrow:240 },
+    { name:"Cherry Pie", tier:4, cost:85000, pricePerBag:867, weedPerGrow:240 },
+    { name:"Cherry Snowman", tier:5, cost:165000, pricePerBag:1025, weedPerGrow:260 }
+];
+
+var currentProfitFilter = 'all';
+
+function filterProfit(tier) {
+    currentProfitFilter = tier;
+    var btns = document.querySelectorAll('.profit-filter');
+    for (var i=0;i<btns.length;i++) btns[i].classList.remove('active');
+    document.querySelector('.profit-filter[data-filter="'+tier+'"]').classList.add('active');
+    renderProfitCards();
+}
+
+function renderProfitCards() {
+    var grid = document.getElementById('profitGrid');
+    var sort = document.getElementById('profitSort').value;
+
+    var seeds = parseInt(document.getElementById('profitGlobalSeeds').value) || 1;
+    profitData.forEach(function(s){
+        var bags = Math.round(s.weedPerGrow / 2 * seeds / 10);
+        s.bags = bags;
+        s.revenue = s.pricePerBag * bags;
+        s.totalCost = Math.round(s.cost * seeds / 10);
+        s.profit = s.revenue - s.totalCost;
+        s.roi = ((s.profit/s.totalCost)*100).toFixed(1);
+    });
+
+    var data = currentProfitFilter === 'all' ? profitData.slice() : profitData.filter(function(s){return s.tier===currentProfitFilter;});
+
+    switch(sort) {
+        case 'profit-desc': data.sort(function(a,b){return b.profit-a.profit;}); break;
+        case 'profit-asc': data.sort(function(a,b){return a.profit-b.profit;}); break;
+        case 'roi-desc': data.sort(function(a,b){return parseFloat(b.roi)-parseFloat(a.roi);}); break;
+        case 'cost-asc': data.sort(function(a,b){return a.cost-b.cost;}); break;
+        case 'tier-asc': data.sort(function(a,b){return a.tier-b.tier||a.name.localeCompare(b.name);}); break;
+    }
+
+    var tierStyles = {
+        1: { color:'#60a5fa', border:'border-color:rgba(96,165,250,0.3);' },
+        2: { color:'#feff7f', border:'border-color:rgba(254,255,127,0.3);' },
+        3: { color:'#7fffd4', border:'border-color:rgba(127,255,212,0.3);' },
+        4: { color:'#ffbf7f', border:'border-color:rgba(255,191,127,0.3);' },
+        5: { color:'#ff80bf', border:'border-color:rgba(255,128,191,0.3);' }
+    };
+
+    var fmt = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
+    var html = '';
+    data.forEach(function(s,i){
+        var t = tierStyles[s.tier] || tierStyles[1];
+        var pc = s.profit >= 0 ? '#4ade80' : '#f87171';
+        var pb = s.profit >= 0 ? 'rgba(34,197,94,0.1)' : 'rgba(239,68,68,0.1)';
+        var pbb = s.profit >= 0 ? 'border-color:rgba(34,197,94,0.2);' : 'border-color:rgba(239,68,68,0.2);';
+        var ps = s.profit >= 0 ? '+' : '';
+        html += '<div class="fade-in glass-panel" style="padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);'+t.border+'background:rgba(15,23,42,0.6);transition:transform 0.2s;">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;">';
+        html += '<div><div style="font-weight:700;color:white;font-size:14px;margin-bottom:4px;">'+s.name+'</div>';
+        html += '<span style="color:'+t.color+';background:'+t.color+'10;border:1px solid '+t.color+'30;font-size:9px;font-weight:700;text-transform:uppercase;padding:2px 8px;border-radius:99px;">Tier '+s.tier+'</span></div>';
+        html += '<div style="text-align:right;"><div style="font-size:9px;color:#64748b;text-transform:uppercase;">Cost</div><div style="color:#cbd5e1;font-family:monospace;font-size:13px;">'+fmt.format(s.totalCost)+'</div></div></div>';
+        html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;background:rgba(0,0,0,0.3);border-radius:8px;padding:6px 8px;border:1px solid rgba(255,255,255,0.05);">';
+        html += '<div style="font-size:8px;color:#64748b;text-transform:uppercase;white-space:nowrap;">Weed:</div>';
+        html += '<input type="number" value="'+s.weedPerGrow+'" min="1" onchange="updateWeed(\''+s.name+'\',this.value)" class="font-mono" style="width:50px;background:transparent;color:white;text-align:center;border:none;border-bottom:1px solid #475569;font-size:12px;padding:2px;">';
+        html += '<div style="font-size:8px;color:#64748b;white-space:nowrap;">→ '+fmt.format(Math.round(s.weedPerGrow*seeds/10))+' weed → <span style="color:#93c5fd;font-weight:700;">'+s.bags+' bags</span></div></div>';
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">';
+        html += '<div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:8px;border:1px solid rgba(255,255,255,0.05);"><div style="font-size:8px;color:#64748b;text-transform:uppercase;margin-bottom:2px;">Price/Bag</div><div style="color:white;font-family:monospace;font-size:13px;">'+fmt.format(s.pricePerBag)+'</div></div>';
+        html += '<div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:8px;border:1px solid rgba(255,255,255,0.05);"><div style="font-size:8px;color:#64748b;text-transform:uppercase;margin-bottom:2px;">Revenue</div><div style="color:white;font-family:monospace;font-size:13px;">'+fmt.format(s.revenue)+'</div></div></div>';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;background:'+pb+';border:1px solid '+pbb+'border-radius:8px;padding:8px;">';
+        html += '<span style="font-size:9px;color:#94a3b8;text-transform:uppercase;font-weight:700;">Profit</span>';
+        html += '<div style="text-align:right;"><div style="color:'+pc+';font-weight:700;font-family:monospace;font-size:13px;">'+ps+fmt.format(s.profit)+'</div>';
+        html += '<div style="font-size:9px;color:'+pc+';font-family:monospace;">'+s.roi+'% ROI</div></div></div></div>';
+    });
+    grid.innerHTML = html;
+
+    var best = profitData.reduce(function(a,b){return a.profit>b.profit?a:b;});
+    var bestROI = profitData.reduce(function(a,b){return (a.profit/a.totalCost)>(b.profit/b.totalCost)?a:b;});
+    var worst = profitData.reduce(function(a,b){return a.profit<b.profit?a:b;});
+    document.getElementById('summaryBestProfit').textContent = best.name;
+    document.getElementById('summaryBestProfitVal').textContent = '+'+fmt.format(best.profit);
+    document.getElementById('summaryBestROI').textContent = bestROI.name;
+    document.getElementById('summaryBestROIVal').textContent = ((bestROI.profit/bestROI.totalCost)*100).toFixed(1)+'%';
+    document.getElementById('summaryWorst').textContent = worst.name;
+    document.getElementById('summaryWorstVal').textContent = fmt.format(worst.profit);
+}
+
+function updateWeed(name, val) {
+    var s = profitData.find(function(x){return x.name===name;});
+    if (!s) return;
+    s.weedPerGrow = parseInt(val) || 180;
+    renderProfitCards();
+}
+
+// ===== OTHER DRUGS =====
+var drugData = [
+    { name:"Shrooms", price:160, emoji:"&#127812;" },
+    { name:"White PL Pills", price:325, emoji:"&#128138;" },
+    { name:"White Cat Pills", price:325, emoji:"&#128049;" },
+    { name:"White Troll Pills", price:325, emoji:"&#128122;" },
+    { name:"White Playboy Pills", price:325, emoji:"&#128084;" },
+    { name:"White Alien Pills", price:325, emoji:"&#128125;" },
+    { name:"Orange PL Pills", price:425, emoji:"&#128138;" },
+    { name:"Orange Troll Pills", price:375, emoji:"&#128122;" },
+    { name:"Orange Playboy Pills", price:375, emoji:"&#128084;" },
+    { name:"Orange Cat Pills", price:375, emoji:"&#128049;" },
+    { name:"Orange Alien Pills", price:375, emoji:"&#128125;" },
+    { name:"Oxy", price:210, emoji:"&#128138;" },
+    { name:"Cocaine Baggy", price:360, emoji:"&#10052;" }
+];
+
+var ds = document.getElementById('drugSelect');
+drugData.forEach(function(d){ var o=document.createElement('option'); o.value=d.name; o.textContent=d.name+' - $'+d.price; ds.appendChild(o); });
+
+function renderDrugCards() {
+    var grid = document.getElementById('drugGrid');
+    var fmt = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
+    var qty = parseInt(document.getElementById('drugQty').value) || 1;
+    var html = '';
+    drugData.forEach(function(d,i){
+        var rev = d.price * qty;
+        html += '<div class="fade-in glass-panel" style="padding:16px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);border-color:rgba(74,222,128,0.2);background:rgba(15,23,42,0.6);animation-delay:'+(i*0.05)+'s;">';
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">';
+        html += '<div style="font-weight:700;color:white;font-size:14px;">'+d.name+'</div>';
+        html += '<div style="color:#64748b;font-family:monospace;font-size:11px;">$'+fmt.format(d.price)+'/ea</div></div>';
+        html += '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">';
+        html += '<div style="background:rgba(0,0,0,0.3);border-radius:8px;padding:8px;text-align:center;border:1px solid rgba(255,255,255,0.05);"><div style="font-size:8px;color:#64748b;text-transform:uppercase;margin-bottom:2px;">Revenue</div><div style="color:white;font-family:monospace;font-size:12px;">$'+fmt.format(rev)+'</div></div>';
+        html += '<div style="background:rgba(34,197,94,0.1);border-radius:8px;padding:8px;text-align:center;border:1px solid rgba(34,197,94,0.2);"><div style="font-size:8px;color:#64748b;text-transform:uppercase;margin-bottom:2px;">Profit</div><div style="color:#4ade80;font-family:monospace;font-size:12px;font-weight:700;">+$'+fmt.format(rev)+'</div></div>';
+        html += '</div></div>';
+    });
+    grid.innerHTML = html;
+}
+
+renderDrugCards();
+
+renderProfitCards();
+</script>
+</div>
+</body>
+</html>
