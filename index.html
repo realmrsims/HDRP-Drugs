@@ -158,11 +158,9 @@
             <button onclick="calculateBreeding()" style="padding:10px 32px;border-radius:12px;border:none;background:linear-gradient(135deg,#059669,#0d9488);color:white;font-weight:700;cursor:pointer;">Calculate</button>
         </div>
 
-        <div class="glass-panel rounded-xl p-3 mb-4" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;">
-            <span style="font-size:10px;text-transform:uppercase;font-weight:700;color:#94a3b8;letter-spacing:1px;">Inventory:</span>
-            <div style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.3);padding:6px 12px;border-radius:8px;border:1px solid rgba(100,116,139,0.3);"><span style="font-size:10px;color:#93c5fd;font-weight:700;">Lemon Haze</span><input type="number" id="inv-Lemon Haze" class="font-mono" style="width:48px;background:transparent;color:white;text-align:center;border:none;border-bottom:1px solid #475569;" placeholder="0" min="0"></div>
-            <div style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.3);padding:6px 12px;border-radius:8px;border:1px solid rgba(100,116,139,0.3);"><span style="font-size:10px;color:#93c5fd;font-weight:700;">N. Lights</span><input type="number" id="inv-Northern Lights" class="font-mono" style="width:48px;background:transparent;color:white;text-align:center;border:none;border-bottom:1px solid #475569;" placeholder="0" min="0"></div>
-            <div style="display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.3);padding:6px 12px;border-radius:8px;border:1px solid rgba(100,116,139,0.3);"><span style="font-size:10px;color:#93c5fd;font-weight:700;">Blue Dream</span><input type="number" id="inv-Blue Dream" class="font-mono" style="width:48px;background:transparent;color:white;text-align:center;border:none;border-bottom:1px solid #475569;" placeholder="0" min="0"></div>
+        <div class="glass-panel rounded-xl p-3 mb-4">
+            <div style="font-size:10px;text-transform:uppercase;font-weight:700;color:#94a3b8;letter-spacing:1px;margin-bottom:10px;">Inventory</div>
+            <div id="inventoryGrid" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
         </div>
 
         <div id="breedingResults" style="display:none;">
@@ -293,33 +291,57 @@ var tierColors2 = {
 };
 
 var sel = document.getElementById('targetSeed');
-Object.keys(database).sort(function(a,b){return database[a].tier-database[b].tier;}).forEach(function(s){
+var allStrains = baseStrains.concat(Object.keys(database).sort(function(a,b){return database[a].tier-database[b].tier;}));
+allStrains.forEach(function(s){
     var o = document.createElement('option');
     o.value = s;
-    o.textContent = 'Tier ' + database[s].tier + ' - ' + s;
+    var t = database[s] ? database[s].tier : (s === 'Lemon Haze' || s === 'Northern Lights' || s === 'Blue Dream' ? 1 : '?');
+    o.textContent = (t === 1 ? 'Base' : 'Tier ' + t) + ' - ' + s;
     sel.appendChild(o);
 });
 
+// Build inventory inputs for all strains
+var invGrid = document.getElementById('inventoryGrid');
+allStrains.forEach(function(s){
+    var t = database[s] ? database[s].tier : 1;
+    var tc = t === 1 ? '#60a5fa' : tierColors2[t] ? tierColors2[t].color : '#94a3b8';
+    var div = document.createElement('div');
+    div.style.cssText = 'display:flex;align-items:center;gap:4px;background:rgba(0,0,0,0.3);padding:4px 8px;border-radius:6px;border:1px solid rgba(100,116,139,0.2);';
+    div.innerHTML = '<span style="font-size:9px;color:'+tc+';font-weight:700;white-space:nowrap;">'+(s.length > 12 ? s.substring(0,11)+'.' : s)+'</span><input type="number" id="inv-'+s+'" class="font-mono" style="width:36px;background:transparent;color:white;text-align:center;border:none;border-bottom:1px solid #475569;font-size:11px;" placeholder="0" min="0">';
+    invGrid.appendChild(div);
+});
+
 document.getElementById('batchSize').addEventListener('input', calculateBreeding);
-document.getElementById('inv-Lemon Haze').addEventListener('input', calculateBreeding);
-document.getElementById('inv-Northern Lights').addEventListener('input', calculateBreeding);
-document.getElementById('inv-Blue Dream').addEventListener('input', calculateBreeding);
+document.getElementById('targetSeed').addEventListener('change', calculateBreeding);
+
+// Attach listeners to all inventory inputs
+allStrains.forEach(function(s){
+    document.getElementById('inv-'+s).addEventListener('input', calculateBreeding);
+});
+
+function getInv() {
+    var inv = {};
+    allStrains.forEach(function(s){
+        inv[s] = parseInt(document.getElementById('inv-'+s).value) || 0;
+    });
+    return inv;
+}
 
 function calculateBreeding() {
     var target = document.getElementById('targetSeed').value;
     var amount = parseInt(document.getElementById('batchSize').value) || 1;
-    var inv = {
-        "Lemon Haze": parseInt(document.getElementById('inv-Lemon Haze').value) || 0,
-        "Northern Lights": parseInt(document.getElementById('inv-Northern Lights').value) || 0,
-        "Blue Dream": parseInt(document.getElementById('inv-Blue Dream').value) || 0
-    };
+    var inv = getInv();
     if (!target) return;
-    var baseTotals = {}, steps = [];
+    var needed = {}, steps = [];
+
     function resolve(name, qty) {
-        if (baseStrains.indexOf(name) !== -1) { baseTotals[name] = (baseTotals[name]||0)+qty; return; }
+        var have = Math.min(inv[name] || 0, qty);
+        var deficit = qty - have;
+        if (deficit <= 0) return;
+        if (baseStrains.indexOf(name) !== -1) { needed[name] = (needed[name]||0)+deficit; return; }
         var r = database[name]; if (!r) return;
-        steps.push({ name:name, qty:qty, tier:r.tier, p1:r.p1, p2:r.p2, dna:r.dna });
-        resolve(r.p1, qty); resolve(r.p2, qty);
+        steps.push({ name:name, qty:deficit, tier:r.tier, p1:r.p1, p2:r.p2, dna:r.dna });
+        resolve(r.p1, deficit); resolve(r.p2, deficit);
     }
     resolve(target, amount);
     steps.sort(function(a,b){return (a.tier-b.tier)||a.name.localeCompare(b.name);});
@@ -328,14 +350,11 @@ function calculateBreeding() {
     var baseEl = document.getElementById('baseIngredientsList');
     var stepsEl = document.getElementById('breedingSteps');
     baseEl.innerHTML = ''; stepsEl.innerHTML = '';
-    var net = 0;
 
-    Object.keys(baseTotals).forEach(function(n){
-        var c = baseTotals[n], o = inv[n]||0, need = Math.max(0, c-o);
-        net += need;
+    Object.keys(needed).forEach(function(n){
         var d = document.createElement('div');
         d.style.cssText = 'display:flex;align-items:center;gap:8px;background:rgba(100,116,139,0.15);padding:6px 12px;border-radius:8px;border:1px solid rgba(100,116,139,0.2);white-space:nowrap;';
-        d.innerHTML = '<span style="color:#cbd5e1;font-weight:500;font-size:12px;">'+n+'</span><span style="color:#93c5fd;font-weight:700;background:rgba(59,130,246,0.2);padding:2px 8px;border-radius:4px;font-size:10px;font-family:monospace;">'+need+'</span>';
+        d.innerHTML = '<span style="color:#cbd5e1;font-weight:500;font-size:12px;">'+n+'</span><span style="color:#93c5fd;font-weight:700;background:rgba(59,130,246,0.2);padding:2px 8px;border-radius:4px;font-size:10px;font-family:monospace;">'+needed[n]+'</span>';
         baseEl.appendChild(d);
     });
 
