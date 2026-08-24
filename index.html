@@ -306,8 +306,8 @@ allStrains.forEach(function(s){
     var t = database[s] ? database[s].tier : 1;
     var tc = t === 1 ? '#60a5fa' : tierColors2[t] ? tierColors2[t].color : '#94a3b8';
     var div = document.createElement('div');
-    div.style.cssText = 'display:flex;align-items:center;gap:4px;background:rgba(0,0,0,0.3);padding:4px 8px;border-radius:6px;border:1px solid rgba(100,116,139,0.2);';
-    div.innerHTML = '<span style="font-size:9px;color:'+tc+';font-weight:700;white-space:nowrap;">'+(s.length > 12 ? s.substring(0,11)+'.' : s)+'</span><input type="number" id="inv-'+s+'" class="font-mono" style="width:36px;background:transparent;color:white;text-align:center;border:none;border-bottom:1px solid #475569;font-size:11px;" placeholder="0" min="0">';
+    div.style.cssText = 'display:flex;align-items:center;gap:6px;background:rgba(0,0,0,0.3);padding:6px 10px;border-radius:8px;border:1px solid rgba(100,116,139,0.2);';
+    div.innerHTML = '<span style="font-size:10px;color:'+tc+';font-weight:700;white-space:nowrap;">'+s+'</span><input type="number" id="inv-'+s+'" class="font-mono" style="width:48px;background:transparent;color:white;text-align:center;border:none;border-bottom:1px solid #475569;font-size:12px;padding:4px;" placeholder="0" min="0">';
     invGrid.appendChild(div);
 });
 
