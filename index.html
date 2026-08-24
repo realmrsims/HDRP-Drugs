@@ -353,8 +353,8 @@ function calculateBreeding() {
 
     Object.keys(needed).forEach(function(n){
         var d = document.createElement('div');
-        d.style.cssText = 'display:flex;align-items:center;gap:8px;background:rgba(100,116,139,0.15);padding:6px 12px;border-radius:8px;border:1px solid rgba(100,116,139,0.2);white-space:nowrap;';
-        d.innerHTML = '<span style="color:#cbd5e1;font-weight:500;font-size:12px;">'+n+'</span><span style="color:#93c5fd;font-weight:700;background:rgba(59,130,246,0.2);padding:2px 8px;border-radius:4px;font-size:10px;font-family:monospace;">'+needed[n]+'</span>';
+        d.style.cssText = 'display:flex;align-items:center;gap:8px;background:rgba(100,116,139,0.15);padding:8px 14px;border-radius:8px;border:1px solid rgba(100,116,139,0.2);white-space:nowrap;';
+        d.innerHTML = '<span style="color:#cbd5e1;font-weight:500;font-size:13px;">'+n+'</span><span style="color:#93c5fd;font-weight:700;background:rgba(59,130,246,0.2);padding:3px 10px;border-radius:4px;font-size:12px;font-family:monospace;">'+needed[n]+'</span>';
         baseEl.appendChild(d);
     });
 
