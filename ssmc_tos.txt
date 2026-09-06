@@ -1,0 +1,118 @@
+# Terms of Service for SSMC Bot
+
+**Last Updated: 6 September 2026**
+
+These Terms of Service ("Terms") govern your use of the **SSMC Discord Bot** ("SSMC", "the Bot", "we", "us", or "our").
+
+By inviting, accessing, interacting with, or using the SSMC Bot, you agree to comply with these Terms.
+
+## 1. Use of the Bot
+
+You agree to use the SSMC Bot responsibly and in accordance with:
+
+* These Terms of Service
+* Discord's Terms of Service
+* Discord's Community Guidelines
+* Applicable laws and regulations
+
+You must not use the Bot to intentionally disrupt, abuse, exploit, or interfere with its operation or other users.
+
+## 2. Server Administrator Responsibility
+
+If you add the SSMC Bot to a Discord server, you are responsible for ensuring that you have the appropriate permissions to do so.
+
+Server administrators are also responsible for configuring and managing the Bot's permissions and features within their server.
+
+## 3. Prohibited Use
+
+You may not use the SSMC Bot to:
+
+* Exploit bugs, vulnerabilities, or unintended functionality
+* Attempt to gain unauthorised access to the Bot, its database, hosting infrastructure, or related services
+* Spam or intentionally overload the Bot
+* Interfere with the Bot's operation
+* Use automated systems to abuse Bot commands or features
+* Impersonate the Bot developers or administrators
+* Use the Bot for unlawful purposes
+* Attempt to bypass restrictions, permissions, cooldowns, or security measures
+
+We reserve the right to restrict or permanently block access to the Bot where abuse or misuse is detected.
+
+## 4. Availability
+
+The SSMC Bot is provided on an **"as is"** and **"as available"** basis.
+
+We do not guarantee that the Bot will always be available, uninterrupted, error-free, or free from security vulnerabilities.
+
+The Bot may be temporarily or permanently modified, suspended, discontinued, or taken offline at any time without prior notice.
+
+## 5. Changes to the Bot
+
+We reserve the right to:
+
+* Add or remove features
+* Modify existing functionality
+* Change permissions or requirements
+* Perform maintenance
+* Restrict access to certain features
+* Suspend or terminate the Bot
+
+We are not liable for any loss resulting from changes, interruptions, or discontinuation of the Bot.
+
+## 6. User-Submitted Content
+
+Certain features may allow users to submit information, including applications, reports, messages, forms, or other content.
+
+You are responsible for the information you submit.
+
+You must not knowingly submit content that is unlawful, malicious, misleading, abusive, or intended to disrupt the Bot or its services.
+
+## 7. Termination and Access Restrictions
+
+We reserve the right to suspend, restrict, or permanently terminate access to the SSMC Bot for any user or Discord server that violates these Terms or abuses the Bot.
+
+We may take this action with or without prior warning where reasonably necessary.
+
+## 8. Privacy
+
+Your use of the SSMC Bot is also governed by our Privacy Policy.
+
+By using the Bot, you acknowledge that certain information may be processed as described in the Privacy Policy.
+
+## 9. Limitation of Liability
+
+To the fullest extent permitted by applicable law, the SSMC Bot and its developers shall not be liable for any direct, indirect, incidental, consequential, or other damages resulting from:
+
+* Use or inability to use the Bot
+* Loss of data
+* Service interruptions
+* Errors or bugs
+* Unauthorised access to systems or data
+* Actions taken by server administrators or other users
+
+Use of the Bot is at your own risk.
+
+## 10. Third-Party Services
+
+The SSMC Bot operates through Discord and may rely on third-party services, APIs, hosting providers, or other external services.
+
+We are not responsible for interruptions, failures, or changes caused by third-party services.
+
+## 11. Changes to These Terms
+
+We may update or modify these Terms of Service at any time.
+
+Changes will be published on this page, and the **Last Updated** date will be changed accordingly.
+
+Continued use of the SSMC Bot after changes have been published constitutes acceptance of the revised Terms.
+
+## 12. Contact
+
+If you have any questions or concerns regarding these Terms of Service, please contact the SSMC Bot team through:
+
+**[INSERT DISCORD SERVER, EMAIL ADDRESS, OR CONTACT METHOD HERE]**
+
+---
+
+**SSMC Bot**
+Terms of Service
