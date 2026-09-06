@@ -1,0 +1,114 @@
+# Privacy Policy for SSMC Bot
+
+**Last Updated: 6 September 2026**
+
+This Privacy Policy explains how the **SSMC Discord Bot** ("SSMC", "the Bot", "we", "us", or "our") collects, uses, stores, and protects information when you use the Bot.
+
+By adding, using, or interacting with the SSMC Bot, you agree to this Privacy Policy.
+
+## 1. Information We May Collect
+
+The SSMC Bot may collect and process limited information required for its functionality. This may include:
+
+* Discord User IDs
+* Discord Server (Guild) IDs
+* Discord Channel IDs
+* Discord Role IDs
+* Discord Message IDs
+* Command usage and interaction data
+* Information voluntarily submitted through commands, forms, applications, reports, or other Bot features
+* Server configuration and settings created through the Bot
+
+The Bot does not intentionally collect unnecessary personal information.
+
+## 2. How We Use Information
+
+Information collected by the Bot may be used to:
+
+* Provide and operate Bot features
+* Store server-specific settings and configurations
+* Process applications, reports, requests, or submissions
+* Provide moderation and administration features
+* Prevent abuse, spam, or malicious use
+* Improve the functionality and reliability of the Bot
+* Maintain logs where a server has enabled logging features
+
+Information is only used where reasonably necessary for the Bot to function.
+
+## 3. Message Content
+
+The SSMC Bot does not intentionally store the contents of Discord messages unless this is required by a specific feature, such as:
+
+* Moderation systems
+* Reports
+* Applications
+* Logging systems
+* Commands or interactions where information is voluntarily submitted
+
+Where message content is processed, it is only used for the functionality of the relevant Bot feature.
+
+## 4. Data Storage and Security
+
+Data may be stored in a database or other secure storage system operated by the Bot developers.
+
+We take reasonable steps to protect stored information from unauthorised access, alteration, disclosure, or destruction. However, no system can guarantee absolute security.
+
+## 5. Data Sharing
+
+We do not sell, rent, or trade your personal information.
+
+Information may only be disclosed when:
+
+* Required to provide the Bot's functionality
+* Required by applicable law
+* Necessary to protect the security or integrity of the Bot
+* Necessary to investigate abuse, fraud, or malicious activity
+
+## 6. Third-Party Services
+
+The SSMC Bot operates through Discord and may use third-party services or APIs where required for certain features.
+
+Your use of Discord is also subject to Discord's own Privacy Policy and Terms of Service.
+
+We are not responsible for the privacy practices of third-party services.
+
+## 7. Data Retention
+
+Information is retained only for as long as reasonably necessary to provide the Bot's functionality or maintain server configurations, logs, records, and other relevant features.
+
+Server administrators may request the removal of server-specific data where technically possible and appropriate.
+
+Users may also request the deletion of personal data associated with the Bot, subject to legitimate operational, security, or legal requirements.
+
+## 8. Data Deletion Requests
+
+If you would like to request the deletion of data associated with you or your Discord server, please contact us through:
+
+**[INSERT CONTACT METHOD HERE]**
+
+Please include sufficient information for us to identify the relevant data, such as your Discord User ID or Server ID where appropriate.
+
+## 9. Children's Privacy
+
+The SSMC Bot is intended for users who meet Discord's minimum age requirements.
+
+We do not knowingly collect personal information from individuals who are not permitted to use Discord under Discord's applicable Terms of Service.
+
+## 10. Changes to This Privacy Policy
+
+We may update this Privacy Policy from time to time.
+
+Any changes will be posted on this page, and the "Last Updated" date will be revised accordingly.
+
+Continued use of the SSMC Bot after changes are published may constitute acceptance of the updated Privacy Policy.
+
+## 11. Contact
+
+If you have questions, concerns, or requests regarding this Privacy Policy or the data processed by the SSMC Bot, please contact us through:
+
+**[INSERT DISCORD SERVER, EMAIL ADDRESS, OR CONTACT METHOD HERE]**
+
+---
+
+**SSMC Bot**
+Privacy Policy
